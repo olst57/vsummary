@@ -13,3 +13,14 @@ class UserVisibleError(RuntimeError):
     def __init__(self, code: str, message: str):
         super().__init__(message)
         self.code = code
+
+
+class TemporaryServiceError(UserVisibleError):
+    """An external service is temporarily unreachable; the job worker retries the job later.
+
+    Retries are silent to the user; `message` is shown only once retries are exhausted.
+    """
+
+    def __init__(self, code: str, message: str, *, retry_after_seconds: int = 30):
+        super().__init__(code, message)
+        self.retry_after_seconds = retry_after_seconds
